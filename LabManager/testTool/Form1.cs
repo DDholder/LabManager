@@ -4,7 +4,7 @@ using System.Net;
 using System.Windows.Forms;
 using ManagerNet;
 using Secret;
-namespace testTool
+namespace testTool//sss
 {
     public partial class Form1 : Form
     {
