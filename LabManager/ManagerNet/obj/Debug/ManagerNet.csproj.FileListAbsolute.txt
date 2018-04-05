@@ -15,3 +15,14 @@ C:\Users\Deng\source\repos\LabManager\ManagerNet\obj\Debug\ManagerNet.csproj.Cop
 C:\Users\Deng\source\repos\LabManager\ManagerNet\obj\Debug\ManagerNet.csprojResolveAssemblyReference.cache
 C:\Users\Deng\source\repos\LabManager\ManagerNet\obj\Debug\ManagerNet.AcceptLinkForm.resources
 C:\Users\Deng\source\repos\LabManager\ManagerNet\obj\Debug\ManagerNet.csproj.GenerateResource.cache
+C:\Users\Deng\source\repos\LabManager\LabManager\ManagerNet\bin\Debug\ManagerNet.dll
+C:\Users\Deng\source\repos\LabManager\LabManager\ManagerNet\bin\Debug\ManagerNet.pdb
+C:\Users\Deng\source\repos\LabManager\LabManager\ManagerNet\bin\Debug\Secret.dll
+C:\Users\Deng\source\repos\LabManager\LabManager\ManagerNet\bin\Debug\Secret.pdb
+C:\Users\Deng\source\repos\LabManager\LabManager\ManagerNet\obj\Debug\ManagerNet.csprojResolveAssemblyReference.cache
+C:\Users\Deng\source\repos\LabManager\LabManager\ManagerNet\obj\Debug\ManagerNet.AcceptLinkForm.resources
+C:\Users\Deng\source\repos\LabManager\LabManager\ManagerNet\obj\Debug\ManagerNet.csproj.GenerateResource.cache
+C:\Users\Deng\source\repos\LabManager\LabManager\ManagerNet\obj\Debug\ManagerNet.csproj.CoreCompileInputs.cache
+C:\Users\Deng\source\repos\LabManager\LabManager\ManagerNet\obj\Debug\ManagerNet.csproj.CopyComplete
+C:\Users\Deng\source\repos\LabManager\LabManager\ManagerNet\obj\Debug\ManagerNet.dll
+C:\Users\Deng\source\repos\LabManager\LabManager\ManagerNet\obj\Debug\ManagerNet.pdb
