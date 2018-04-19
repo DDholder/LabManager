@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="TCPData.cs" />
     <Compile Include="DataBase\DataBaseManager.cs" />
     <Compile Include="Message\Code.cs" />
     <Compile Include="Message\Message.cs" />

@@ -39,3 +39,15 @@ C:\Users\Deng\source\repos\LabManager\LabManager\testTool\obj\Debug\testTool.pdb
 C:\Users\Deng\source\repos\LabManager\LabManager\testTool\bin\Debug\LabManager.dll
 C:\Users\Deng\source\repos\LabManager\LabManager\testTool\bin\Debug\LabManager.pdb
 C:\Users\Deng\source\repos\LabManager\LabManager\testTool\obj\Debug\testTool.csprojResolveAssemblyReference.cache
+C:\Users\91934\Documents\GitHub\LabManager\LabManager\testTool\obj\Debug\testTool.csprojResolveAssemblyReference.cache
+C:\Users\91934\Documents\GitHub\LabManager\LabManager\testTool\obj\Debug\testTool.Form1.resources
+C:\Users\91934\Documents\GitHub\LabManager\LabManager\testTool\obj\Debug\testTool.Properties.Resources.resources
+C:\Users\91934\Documents\GitHub\LabManager\LabManager\testTool\obj\Debug\testTool.csproj.GenerateResource.Cache
+C:\Users\91934\Documents\GitHub\LabManager\LabManager\testTool\obj\Debug\testTool.csproj.CoreCompileInputs.cache
+C:\Users\91934\Documents\GitHub\LabManager\LabManager\testTool\obj\Debug\testTool.exe
+C:\Users\91934\Documents\GitHub\LabManager\LabManager\testTool\obj\Debug\testTool.pdb
+C:\Users\91934\Documents\GitHub\LabManager\LabManager\testTool\bin\Debug\testTool.exe.config
+C:\Users\91934\Documents\GitHub\LabManager\LabManager\testTool\bin\Debug\testTool.exe
+C:\Users\91934\Documents\GitHub\LabManager\LabManager\testTool\bin\Debug\testTool.pdb
+C:\Users\91934\Documents\GitHub\LabManager\LabManager\testTool\bin\Debug\LabManager.dll
+C:\Users\91934\Documents\GitHub\LabManager\LabManager\testTool\bin\Debug\LabManager.pdb

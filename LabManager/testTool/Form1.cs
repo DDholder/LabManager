@@ -7,6 +7,7 @@ using LabManager.Message;
 using LabManager.Secret;
 using LabManager.Net;
 using LabManager.DataBase;
+using LabManager;
 namespace testTool//ssss
 {
     public partial class Form1 : Form
@@ -111,10 +112,12 @@ namespace testTool//ssss
             }
         }
        public DataSet data = new DataSet();
+        CMDData cmddata = new CMDData("666");
         private void Button7_Click(object sender, EventArgs e)
         {
-            dataBaseManager.SetValue(0, 1, 1234);
-            dataBaseManager.UpdateData();
+            //dataBaseManager.SetValue(0, 1, 1234);
+            //dataBaseManager.UpdateData();
+            label2.Text = cmddata.DataStr;
         }
     }
 }
