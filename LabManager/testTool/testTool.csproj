@@ -32,8 +32,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DataBase">
+      <HintPath>..\DataBase\bin\Debug\DataBase.dll</HintPath>
+    </Reference>
+    <Reference Include="LabManager">
+      <HintPath>..\LabManager\bin\Debug\LabManager.dll</HintPath>
+    </Reference>
     <Reference Include="ManagerNet">
       <HintPath>..\ManagerNet\bin\Debug\ManagerNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Message">
+      <HintPath>..\Message\bin\Debug\Message.dll</HintPath>
     </Reference>
     <Reference Include="Secret, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -72,6 +81,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="Properties\DataSources\Form1.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -84,6 +94,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

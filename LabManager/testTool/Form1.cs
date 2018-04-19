@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Net;
 using System.Windows.Forms;
-using ManagerNet;
-using Secret;
+using LabManager.Message;
+using LabManager.Secret;
+using LabManager.Net;
+using LabManager.DataBase;
 namespace testTool//ssss
 {
     public partial class Form1 : Form
@@ -15,12 +18,12 @@ namespace testTool//ssss
             client.DataFinished += Client_DataFinished;
             InitializeComponent();
         }
-
-        private string constr =
+        private DataBaseManager dataBaseManager = new DataBaseManager(constr,"Table");
+        private static string constr =
             @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Deng\source\repos\trySQL\trySQL\student.mdf;Integrated Security=True";
-        private Server.Message Server_Excepte(Server.Message message)
+        private Code Server_Excepte(Code message)
         {
-            label2.Text = server.GetErrorMessage(message);
+            label2.Text = message.Message;
             return message;
             //throw new NotImplementedException();
         }
@@ -29,7 +32,7 @@ namespace testTool//ssss
         {
             void show()
             {
-                label1.Text = client.DataString;
+                label4.Text = client.DataString;
             }
             Invoke((Action)show);
         }
@@ -37,7 +40,7 @@ namespace testTool//ssss
         {
             void show()
             {
-                label1.Text = server.DataString;
+                label5.Text = server.DataString;
             }
             Invoke((Action) show);
             //throw new NotImplementedException();
@@ -45,61 +48,73 @@ namespace testTool//ssss
 
         private Server server = new Server("109109109");
 
-        private Client client = new Client(IPAddress.Parse("10.1.51.69"), 6000);
-        private void button1_Click(object sender, EventArgs e)
+        private Client client = new Client(IPAddress.Parse("10.5.76.7"), 6000);
+        private void Button1_Click(object sender, EventArgs e)
         {
             if (textBox1.Text == @"djh") server.LoginPermission = Permission.All;
             server.Open();
         }
         
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
             client.ConnectServer();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void Button3_Click(object sender, EventArgs e)
         {
             client.SendData("ok");
         }
-        private void button4_Click(object sender, EventArgs e)
+        
+        private void Button4_Click(object sender, EventArgs e)
         {
             
-            string strConnection = constr;
-            try
-            {
-                SqlDataAdapter adapter = new SqlDataAdapter("select * from Id", strConnection);
-                SqlConnection conn = new SqlConnection(strConnection);
-                SqlCommand SCD=new SqlCommand("select Id, name from [Table] where name='fjj'", conn);
-                adapter.SelectCommand = SCD;
-                conn.Open();
-                SqlDataReader reder = SCD.ExecuteReader();
-                if (reder.Read())
-                {
-                    label1.Text = reder["Id"].ToString();
-                }
-                else
-                    MessageBox.Show(@"no this message");
-                conn.Close();
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            //string strConnection = constr;
+            //try
+            //{
+            //    SqlDataAdapter adapter = new SqlDataAdapter("select * from Table", strConnection);
+            //    SqlConnection conn = new SqlConnection(strConnection);
+            //    SqlCommand SCD=new SqlCommand("select Id, name from [Table] where name='fjj'", conn);
+            //    adapter.SelectCommand = SCD;
+            //    conn.Open();
+            //    SqlDataReader reder = SCD.ExecuteReader();
+            //    if (reder.Read())
+            //    {
+            //        label1.Text = reder["Id"].ToString();
+            //    }
+            //    else
+            //        MessageBox.Show(@"no this message");
+            //    conn.Close();
+            //}
+            //catch (SqlException ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
+
+
+            dataBaseManager.SetDataSet();
+
+            dataGridView1.DataSource = dataBaseManager.DataSet.Tables[0];
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void Button5_Click(object sender, EventArgs e)
         {
-            //label1.Text = Md5Handler.getMD5("109109109");
-           
+            //server.Send(listBox1.SelectedIndex, "ok");
+            //server.Send(listBox1.SelectedIndex,);
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void Button6_Click(object sender, EventArgs e)
         {
             listBox1.Items.Clear();
-            for (int i = 0; i < server.ClientSocket.Count; i++)
+            foreach (var eachClientSocket in server.ClientSocket)
             {
-                listBox1.Items.Add(server.ClientSocket[i].socket.RemoteEndPoint+"   "+ server.ClientSocket[i].name);
+                listBox1.Items.Add(eachClientSocket.TCPClient.Client.RemoteEndPoint+"   "+ eachClientSocket.name);
             }
+        }
+       public DataSet data = new DataSet();
+        private void Button7_Click(object sender, EventArgs e)
+        {
+            dataBaseManager.SetValue(0, 1, 1234);
+            dataBaseManager.UpdateData();
         }
     }
 }
