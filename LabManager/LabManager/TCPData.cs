@@ -30,7 +30,6 @@ namespace LabManager
             _data = data;
             _dataType = DataType.Unknown;
             head =new []{ (byte)_dataType};
-
         }
     }
     public class CMDData : TCPData
