@@ -41,6 +41,7 @@ namespace LabManager
             head = new[] { (byte)_dataType };
         }
         public byte[] DataByte => head.Concat(_data).ToArray();
+
     }
     public class DBData : TCPData
     {
