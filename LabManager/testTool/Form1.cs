@@ -19,7 +19,7 @@ namespace testTool//ssss
             client.DataFinished += Client_DataFinished;
             InitializeComponent();
         }
-        private DataBaseManager dataBaseManager = new DataBaseManager(constr,"Table");
+        private DataBaseManager dataBaseManager = new DataBaseManager(constr, "Table");
         private static string constr =
             @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Deng\source\repos\trySQL\trySQL\student.mdf;Integrated Security=True";
         private Code Server_Excepte(Code message)
@@ -43,7 +43,8 @@ namespace testTool//ssss
             {
                 label5.Text = server.DataString;
             }
-            Invoke((Action) show);
+            Invoke((Action)show);
+
             //throw new NotImplementedException();
         }
 
@@ -55,7 +56,7 @@ namespace testTool//ssss
             if (textBox1.Text == @"djh") server.LoginPermission = Permission.All;
             server.Open();
         }
-        
+
         private void Button2_Click(object sender, EventArgs e)
         {
             client.ConnectServer();
@@ -65,10 +66,10 @@ namespace testTool//ssss
         {
             client.SendData("ok");
         }
-        
+
         private void Button4_Click(object sender, EventArgs e)
         {
-            
+
             //string strConnection = constr;
             //try
             //{
@@ -101,6 +102,10 @@ namespace testTool//ssss
         {
             //server.Send(listBox1.SelectedIndex, "ok");
             //server.Send(listBox1.SelectedIndex,);
+            var cmd = new[] { (byte)0xaa, (byte)0xbb };
+            cmddata = new CMDData(cmd);
+            //server.SendCMD(listBox1.SelectedIndex,cmddata);
+            server.Write(listBox1.SelectedIndex, cmd,cmd.Length);
         }
 
         private void Button6_Click(object sender, EventArgs e)
@@ -108,16 +113,16 @@ namespace testTool//ssss
             listBox1.Items.Clear();
             foreach (var eachClientSocket in server.ClientSocket)
             {
-                listBox1.Items.Add(eachClientSocket.TCPClient.Client.RemoteEndPoint+"   "+ eachClientSocket.name);
+                listBox1.Items.Add(eachClientSocket.TCPClient.Client.RemoteEndPoint + "   " + eachClientSocket.name);
             }
         }
-       public DataSet data = new DataSet();
-        CMDData cmddata = new CMDData("666");
+        public DataSet data = new DataSet();
+        CMDData cmddata;
         private void Button7_Click(object sender, EventArgs e)
         {
             //dataBaseManager.SetValue(0, 1, 1234);
-            //dataBaseManager.UpdateData();
-            label2.Text = cmddata.DataStr;
+            dataBaseManager.UpdateData();
+            //label2.Text = cmddata.DataStr;
         }
     }
 }

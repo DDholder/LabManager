@@ -107,12 +107,12 @@ namespace LabManager.Net
             try
             {
                 _serverTCP = new TcpClient(new IPEndPoint(_myIp, _myport));
-               // tcpListener.Server.Listen(10);
+                // tcpListener.Server.Listen(10);
                 tcpListener.Start();
                 _waitLinkThread = new Thread(WaitLink);
                 _waitLinkThread.Start();
                 _serverOpened = true;
-                
+
                 return Excepte?.Invoke(_tcpMessage.ServerOpened_OK);
             }
             catch (SocketException ex)
@@ -151,7 +151,7 @@ namespace LabManager.Net
                     }
                 }
                 Thread receiveThread = new Thread(Receive);
-                receiveThread.Start(_clientSocket[_clientSocket.Count - 1].TCPClient);
+                receiveThread.Start(_clientSocket[_clientSocket.Count - 1]);
             }
             catch (SocketException ex)
             {
@@ -164,7 +164,7 @@ namespace LabManager.Net
             while (_serverOpened)
             {
                 try
-                {                   
+                {
                     ClientMember client = new ClientMember(tcpListener.AcceptTcpClient());
                     Thread thread = new Thread(AcceptLink);
                     thread.Start(client);
@@ -177,23 +177,31 @@ namespace LabManager.Net
             }
         }
 
-        private void Receive(object client)
+        private void Receive( object  client)
         {
-            TcpClient myClient = client as TcpClient;
+            var myClient = client as ClientMember;
             while (true)
             {
                 try
                 {
                     var result = new byte[4096];
-                    int receiveNumber = myClient.Client.Receive(result);
-                    _dataString = Encoding.Default.GetString(result);
-                    if (receiveNumber == 0) return;
+                    int receiveNumber = myClient.TCPClient.Client.Receive(result);
+                    if (result[0] == (int)DataType.CMD)
+                        _dataString = "get cmd successful!";
+                    else
+                        _dataString = Encoding.Default.GetString(result);
+                    if (receiveNumber == 0)
+                    {
+                        myClient.TCPClient.Close();
+                        _clientSocket.Remove(myClient);
+                        return;
+                    }
                     DataFinished?.Invoke();
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.ToString());
-                    myClient.Close();
+                    myClient.TCPClient.Close();
                     break;
                 }
             }
@@ -235,6 +243,23 @@ namespace LabManager.Net
         public void Send(int index, byte[] data)
         {
             _clientSocket[index].Send(data);
+        }
+
+        public void SendCMD(int index, CMDData data)
+        {
+            _clientSocket[index].Send(data.DataByte);
+        }
+
+        public void Write(int index, byte[] data,int size,int offset=0)   
+        {
+            try
+            {
+                _clientSocket[index].Write(data,data.Length,offset);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);              
+            }
         }
     }
 }

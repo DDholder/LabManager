@@ -6,21 +6,22 @@ namespace LabManager.Net
     {
         public class ClientMember
         {
-            private readonly TcpClient client;
+            private readonly TcpClient _tcpclient;
             public string name;
-
+            private readonly NetworkStream _networkStream;
             public ClientMember(TcpClient tcpclient)
             {
-                client = tcpclient;
+                _tcpclient = tcpclient;
+                _networkStream = tcpclient.GetStream();
             }
 
-            public TcpClient TCPClient => client; 
+            public TcpClient TCPClient => _tcpclient;
 
-            public void Send(byte[] buffer)
-            {
-                client.Client.Send(buffer);
-            }
+            public NetworkStream NetworkStream => _networkStream;
 
+            public void Send(byte[] buffer) => _tcpclient.Client.Send(buffer);
+            public void Write(byte[] buffer, int size, int offset = 0)
+                => _networkStream.Write(buffer, offset, size);
         }
     }
 }

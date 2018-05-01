@@ -11,36 +11,46 @@ namespace LabManager
         Unknown,
         CMD,
         DB,
-        Str
+        Str,
+        Default
     };
+
+    public enum CMDList
+    {
+        Read,
+        Write 
+    }
     public class TCPData
     {
-        protected string _data;
+        protected byte[] _data;
         protected DataType _dataType;
-        public TCPData(string data)
+        protected byte[] head;
+        public TCPData(byte[] data)
         {
             _data = data;
             _dataType = DataType.Unknown;
+            head =new []{ (byte)_dataType};
         }
     }
     public class CMDData : TCPData
     {
-        public CMDData(string data) : base(data)
+        private byte[] _dataByte = new byte[2];
+        public CMDData(byte[] data) : base(data)
         {
             _dataType = DataType.CMD;
+            head = new[] { (byte)_dataType };
         }
-        public string DataStr => _data;
-        public byte[] DataByte => Encoding.Default.GetBytes(_data);
+        public byte[] DataByte => head.Concat(_data).ToArray();
     }
     public class DBData : TCPData
     {
-        public DBData(string data) : base(data)
+        public DBData(byte[] data) : base(data)
         {
         }
     }
     public class StrData : TCPData
     {
-        public StrData(string data) : base(data)
+        public StrData(byte[] data) : base(data)
         {
         }
     }
