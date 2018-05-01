@@ -46,7 +46,6 @@ namespace LabManager
     {
         public DBData(byte[] data) : base(data)
         {
-
         }
     }
     public class StrData : TCPData
