@@ -42,6 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communicate.cs" />
+    <Compile Include="Net\NetBase.cs" />
+    <Compile Include="SystemBase.cs" />
     <Compile Include="TCPData.cs" />
     <Compile Include="DataBase\DataBaseManager.cs" />
     <Compile Include="Message\Code.cs" />
@@ -54,7 +57,7 @@
       <DependentUpon>AcceptLinkForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Net\Client.cs" />
-    <Compile Include="Net\Server.ClientMember.cs" />
+    <Compile Include="Net\ClientMember.cs" />
     <Compile Include="Net\Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Secret\MD5Handler.cs" />

@@ -1,9 +1,11 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
+using System.Windows.Forms;
 
 namespace LabManager.DataBase
 {
-    public class DataBaseManager
+    public class DataBaseManager : SystemBase
     {
         private string _constr;
         private readonly SqlConnection _dataBaseConn;
@@ -12,28 +14,54 @@ namespace LabManager.DataBase
         private string _commandString;
         public DataBaseManager(string connectString, string tableName)
         {
-            _constr = connectString;
-            _tableName = "[" + tableName + "]";
-            _dataBaseConn = new SqlConnection(_constr);
-            _commandString = @"select * from " + _tableName;
-            _adapter = new SqlDataAdapter(_commandString, _dataBaseConn);
+
+            try
+            {
+                _constr = connectString;
+                _tableName = "[" + tableName + "]";
+                _dataBaseConn = new SqlConnection(_constr);
+                _commandString = @"select * from " + _tableName;
+                _adapter = new SqlDataAdapter(_commandString, _dataBaseConn);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                RecordErrLog(ex.ToString());
+            }
         }
 
         private DataSet _dataSet = new DataSet();
 
         public void SetDataSet(DataSet dataSet)
         {
-            _dataSet = dataSet.Copy();
+            try
+            {
+                _dataSet = dataSet.Copy();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                RecordErrLog(ex.ToString());
+            }
+
         }
         /// <summary>
         /// 根据设置数据集
         /// </summary>
         public void SetDataSet()
         {
-            _dataSet.Clear();
-            _dataBaseConn.Open();
-            _adapter.Fill(_dataSet, _tableName);
-            _dataBaseConn.Close();
+            try
+            {
+                _dataSet.Clear();
+                _dataBaseConn.Open();
+                _adapter.Fill(_dataSet, _tableName);
+                _dataBaseConn.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                RecordErrLog(ex.ToString());
+            }
         }
         /// <summary>
         /// 修改数据库里的值
@@ -43,15 +71,32 @@ namespace LabManager.DataBase
         /// <param name="value">值</param>
         public void SetValue(int row, int Columns, object value)
         {
-            _dataSet.Tables[0].Rows[row][Columns] = value;
+            try
+            {
+                _dataSet.Tables[0].Rows[row][Columns] = value;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                RecordErrLog(ex.ToString());
+            }
         }
         /// <summary>
         /// 更新数据库
         /// </summary>
         public void UpdateData()
         {
-            var myCommandBuilder = new SqlCommandBuilder(_adapter);
-            _adapter.Update(_dataSet, _tableName);
+            try
+            {
+                var myCommandBuilder = new SqlCommandBuilder(_adapter);
+                _adapter.Update(_dataSet, _tableName);
+                RecordOperateLog("更新数据库");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                RecordErrLog(ex.ToString());
+            }
         }
         /// <summary>
         /// 获取或设置数据库连接字符串

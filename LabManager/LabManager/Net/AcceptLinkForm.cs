@@ -16,8 +16,8 @@ namespace LabManager.Net
         {
             InitializeComponent();
         }
-        public LabManager.Net.Server.ClientMember thisClient;
-        public AcceptLinkForm(LabManager.Net.Server.ClientMember client)
+        public LabManager.Net.ClientMember thisClient;
+        public AcceptLinkForm(LabManager.Net.ClientMember client)
         {
             thisClient = client;
             InitializeComponent();
