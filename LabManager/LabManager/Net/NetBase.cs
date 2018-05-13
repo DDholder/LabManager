@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
-using LabManager.Message;
-using LabManager.Secret;
+
 namespace LabManager.Net
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// 网络系统的基类
+    /// </summary>
     public class NetBase : SystemBase
     {
         /// <summary>
@@ -23,32 +20,49 @@ namespace LabManager.Net
         /// TCP收到数据事件
         /// </summary>
         public event DataFinishedHandle DataFinished;
-
+        /// <summary>
+        /// 连接断开的事件委托
+        /// </summary>
+        /// <param name="endPoint"></param>
         public delegate void DisConnectHandle(EndPoint endPoint);
+        /// <summary>
+        /// 连接断开的事件
+        /// </summary>
         public event DisConnectHandle DisConnected;
-        protected IPAddress ThisIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList
-            .FirstOrDefault(a => a.AddressFamily.ToString().Equals("InterNetwork"));
-        protected int ThisPort = 6000;
 
-        protected NetBase()
-        {
-        }
+        /// <summary>
+        /// 收到的数据
+        /// </summary>
+        public byte[] ReceiveData { get; private set; }
 
-        private byte[] _receiveData = null;
-        public byte[] ReceiveData => _receiveData;
+        /// <summary>
+        /// 此组建的网络数据流
+        /// </summary>
         protected NetworkStream ThisNetworkStream { get; set; }
-
+        /// <summary>
+        /// 向数据流中写入数据
+        /// </summary>
+        /// <param name="data">要写入的数据</param>
+        /// <param name="size">要写入的数量</param>
+        /// <param name="offset">从data的指定位置开始写入</param>
         public void Write(byte[] data, int size, int offset = 0)
         {
             ThisNetworkStream.Write(data, offset, size);
+            ThisNetworkStream.Flush();
         }
-        
+        /// <summary>
+        /// (*测试用)尝试发送struct
+        /// </summary>
         public void TrySendClass()
         {
-            Communicate.tryclass t = new Communicate.tryclass { num = 132456, id = 222 };
-            byte[] data =Communicate.StructToBytes(t);
+            Communicate.Tryclass t = new Communicate.Tryclass { num = 132456, id = 222 };
+            byte[] data = Communicate.StructToBytes(t);
             ThisNetworkStream.Write(data, 0, data.Length);
         }
+        /// <summary>
+        /// 接收数据，如收到数据则触发DataFinished事件，断开则触发DisConnected事件
+        /// </summary>
+        /// <param name="client">要接受数据的TcpClient</param>
         protected void Receive(object client)
         {
             var myClient = client as TcpClient;
@@ -57,11 +71,11 @@ namespace LabManager.Net
                 try
                 {
                     var result = new byte[4096];
-                    int receiveNumber = myClient.Client.Receive(result);
-                    _receiveData = result;
-                    if (receiveNumber == 0)
+                    myClient?.Client.Receive(result);
+                    ReceiveData = result;
+                    if (result.Length == 0)
                     {
-                        DisConnected?.Invoke(myClient.Client.RemoteEndPoint);
+                        DisConnected?.Invoke(myClient?.Client.RemoteEndPoint);
                         return;
                     }
                     DataFinished?.Invoke();
@@ -75,6 +89,17 @@ namespace LabManager.Net
                 }
             }
         }
-
+        /// <summary>
+        /// 此组件的IP地址
+        /// </summary>
+        protected IPAddress ThisIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList
+            .FirstOrDefault(a => a.AddressFamily.ToString().Equals("InterNetwork"));
+        /// <summary>
+        /// 此组件的端口
+        /// </summary>
+        protected int ThisPort = 6000;
+        protected NetBase()
+        {
+        }
     }
 }

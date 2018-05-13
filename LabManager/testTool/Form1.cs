@@ -58,7 +58,7 @@ namespace testTool//ssss
 
         private Server server = new Server("109109109");
 
-        private Client client = new Client(IPAddress.Parse("10.1.51.63"), 6000);
+        private Client client = new Client();
         private void Button1_Click(object sender, EventArgs e)
         {
             if (textBox1.Text == @"djh") server.LoginPermission = Permission.All;
@@ -124,11 +124,10 @@ namespace testTool//ssss
             listBox1.Items.Clear();
             foreach (var eachClientSocket in server.ClientSocket)
             {
-                listBox1.Items.Add(eachClientSocket.TCPClient.Client.RemoteEndPoint + "   " + eachClientSocket.name);
+                listBox1.Items.Add(eachClientSocket.TCPClient.Client.RemoteEndPoint + "   " + eachClientSocket.Name);
             }
         }
         public DataSet data = new DataSet();
-        CMDData cmddata;
         private void Button7_Click(object sender, EventArgs e)
         {
             //dataBaseManager.SetValue(0, 1, 1234);
@@ -153,12 +152,10 @@ namespace testTool//ssss
             System.Reflection.ParameterInfo[] infos=fun.Method.GetParameters();
             
         }
-
         void func(int i)
         {
             label7.Text += "  ok";
         }
-
         void tryinfo()
         {
             StackTrace ss = new StackTrace(true);  

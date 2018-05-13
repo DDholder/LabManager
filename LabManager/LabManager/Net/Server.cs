@@ -10,7 +10,11 @@ using LabManager.Message;
 using LabManager.Secret;
 namespace LabManager.Net
 {
-    public partial class Server : NetBase
+    /// <inheritdoc />
+    /// <summary>
+    /// 服务端类，提供服务端的发送、监听、接受功能
+    /// </summary>
+    public class Server : NetBase
     {
 
         /// <summary>
@@ -19,6 +23,9 @@ namespace LabManager.Net
         /// <param name="message">操作的信息内容</param>
         /// <returns>操作的信息内容</returns>
         public delegate Code ExceptionHandle(Code message);
+        /// <summary>
+        /// 操作的信息事件
+        /// </summary>
         public event ExceptionHandle Excepte;
 
         //private static TcpClient _serverTCP;
@@ -28,6 +35,11 @@ namespace LabManager.Net
         private Permission _loginPermission;
         private readonly TCPMessage _tcpMessage = new TCPMessage();
         private readonly TcpListener _tcpListener;
+        private readonly string _exceptionMessage = "null";
+        private readonly string _secretKey = "5QsLSHkoS75/dipJu877+Q==";
+        /// <summary>
+        /// 客户端列表索引的字典
+        /// </summary>
         public static Dictionary<EndPoint, ClientMember> Dict = new Dictionary<EndPoint, ClientMember>();
         /// <summary>
         /// 获取服务器IP地址
@@ -40,12 +52,7 @@ namespace LabManager.Net
         /// <summary>
         /// 获取服务器是否打开
         /// </summary>
-        public bool ServerOpened => _serverOpened;
-        /// <summary>
-        /// 获取TCP收到的数据
-        /// </summary>
-
-        private string _exceptionMessage = "null";
+        public bool ServerOpened => _serverOpened; 
         /// <summary>
         /// 获取或设置权限
         /// </summary>
@@ -58,14 +65,14 @@ namespace LabManager.Net
         /// 获取客户端列表
         /// </summary>
         public List<ClientMember> ClientSocket => _clientSocket;
-
-        public bool BMain { get; } = false;
-
-        private readonly string _secretKey = "5QsLSHkoS75/dipJu877+Q==";
         /// <summary>
-        /// 消息枚举
+        /// (*待更改)
         /// </summary>
-
+        public bool BMain { get; } = false;
+        /// <summary>
+        /// 服务器初始方法
+        /// </summary>
+        /// <param name="accessKey">登陆的MD5密钥</param>
         public Server(string accessKey)
         {
             try
@@ -89,17 +96,20 @@ namespace LabManager.Net
                 RecordErrLog(ex.ToString());
             }
         }
-
         ~Server()
         {
             RecordOperateLog("exit");
         }
+        /// <summary>
+        /// 客户端离线的处理
+        /// </summary>
+        /// <param name="endPoint">离线客户端的远端地址</param>
         private void Server_DisConnected(EndPoint endPoint) 
         {
             try
             {
                 ClientMember clientMember = Dict[endPoint]; 
-                string name = clientMember.name;
+                string name = clientMember.Name;
                 _clientSocket.Remove(Dict[clientMember.Address]);
                 clientMember.TCPClient.Close();
                 RecordOperateLog(endPoint + "(" + name + ")" + "下线");
@@ -150,7 +160,10 @@ namespace LabManager.Net
                 RecordErrLog(ex.ToString());
             }
         }
-
+        /// <summary>
+        /// 接受客户端的连接
+        /// </summary>
+        /// <param name="client">待连接的客户端</param>
         private void AcceptLink(object client)
         {
             try
@@ -158,7 +171,7 @@ namespace LabManager.Net
                 var myClient = client as ClientMember;
                 AcceptLinkForm acceptLinkForm = new AcceptLinkForm(myClient);
                 acceptLinkForm.ShowDialog();
-                myClient = acceptLinkForm.thisClient;
+                myClient = acceptLinkForm.ThisClient;
                 acceptLinkForm.Close();
                 Dict.Add(myClient.Address, myClient);
                 if (_clientSocket.Count == 0) _clientSocket.Add(myClient);
@@ -185,7 +198,7 @@ namespace LabManager.Net
                     IsBackground = true
                 };
                 receiveThread.Start(_clientSocket[_clientSocket.Count - 1].TCPClient);
-                RecordOperateLog(_clientSocket[_clientSocket.Count - 1].Address+"("+_clientSocket[_clientSocket.Count - 1].name+")"+"上线");
+                RecordOperateLog(_clientSocket[_clientSocket.Count - 1].Address+"("+_clientSocket[_clientSocket.Count - 1].Name+")"+"上线");
             }
             catch (SocketException ex)
             {
@@ -193,7 +206,9 @@ namespace LabManager.Net
                 RecordErrLog(ex.ToString());
             }
         }
-
+        /// <summary>
+        /// 监听客户端连接
+        /// </summary>
         private void WaitLink()
         {
             while (_serverOpened)
@@ -215,7 +230,13 @@ namespace LabManager.Net
                 }
             }
         }
-
+        /// <summary>
+        /// 向指定的客户端发送数据
+        /// </summary>
+        /// <param name="index">客户端在List中的索引</param>
+        /// <param name="data">要发送的数据</param>
+        /// <param name="size">要发送的长度</param>
+        /// <param name="offset">从data的那个位置开始发送</param>
         public void Write(int index, byte[] data, int size, int offset = 0)
         {
             try

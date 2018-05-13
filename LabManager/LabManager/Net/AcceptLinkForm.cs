@@ -1,40 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LabManager.Net
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// 用于接受客户端连接的窗口
+    /// </summary>
     public partial class AcceptLinkForm : Form
     {
-        public AcceptLinkForm()
+        public ClientMember ThisClient;
+        public AcceptLinkForm(ClientMember client)
         {
-            InitializeComponent();
-        }
-        public LabManager.Net.ClientMember thisClient;
-        public AcceptLinkForm(LabManager.Net.ClientMember client)
-        {
-            thisClient = client;
+            ThisClient = client;
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Confirm_Click(object sender, EventArgs e)
         {
-            thisClient.name = textBox1.Text;
+            ThisClient.Name = textBox1.Text;
             Hide(); 
         }
 
         private void AcceptLinkForm_Load(object sender, EventArgs e)
         {
-            label2.Text = thisClient.TCPClient.Client.RemoteEndPoint.ToString();
+            label2.Text = ThisClient.TCPClient.Client.RemoteEndPoint.ToString();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void Cancel_Click(object sender, EventArgs e)
         {
 
         }

@@ -45,7 +45,6 @@
     <Compile Include="Communicate.cs" />
     <Compile Include="Net\NetBase.cs" />
     <Compile Include="SystemBase.cs" />
-    <Compile Include="TCPData.cs" />
     <Compile Include="DataBase\DataBaseManager.cs" />
     <Compile Include="Message\Code.cs" />
     <Compile Include="Message\Message.cs" />

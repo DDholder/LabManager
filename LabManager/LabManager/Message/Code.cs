@@ -2,6 +2,9 @@
 
 namespace LabManager.Message
 {
+    /// <summary>
+    /// (*待修改)
+    /// </summary>
     public class Code
     {
         public string Message { get; }
