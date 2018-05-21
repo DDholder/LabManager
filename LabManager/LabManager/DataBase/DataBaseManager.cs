@@ -17,6 +17,17 @@ namespace LabManager.DataBase
         private string _tableName;
         private string _commandString;
         private DataSet _dataSet = new DataSet();
+        /// <summary>
+        /// 添加一行数据
+        /// </summary>
+        /// <param name="dataBaseManager">要操作的数据库管理器</param>
+        /// <param name="dataRow">要添加的行</param>
+        /// <returns>添加后的数据库管理器</returns>
+        public static DataBaseManager operator+ (DataBaseManager dataBaseManager, DataRow dataRow)
+        {
+            dataBaseManager.DataSet.Tables[0].Rows.Add(dataRow);
+            return dataBaseManager;
+        }
         public string ConStr { get => _constr; set => _constr = value; }
         /// <summary>
         /// 获取或设置数据集

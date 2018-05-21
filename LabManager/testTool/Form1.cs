@@ -10,7 +10,7 @@ using LabManager.Secret;
 using LabManager.Net;
 using LabManager.DataBase;
 using LabManager;
-using  System.Text;
+using System.Text;
 namespace testTool//ssss
 {
     public partial class Form1 : Form
@@ -33,27 +33,35 @@ namespace testTool//ssss
             //throw new NotImplementedException();
         }
 
-        private void Client_DataFinished()
+        private void Client_DataFinished(EndPoint endPoint)
         {
-           // object ob = Communicate.BytesToStruct(client.ReceiveData, new Communicate.tryclass().GetType());
-            //Communicate.tryclass t2 = ob as Communicate.tryclass? ?? new Communicate.tryclass();
-            void show()
+            object ob=Communicate.Bytes2Object(client.ReceiveData);
+            Type type = ob.GetType();
+            if (type == typeof(Communicate.DataBaseCmd))
             {
-                label4.Text = Encoding.Default.GetString(client.ReceiveData);
+                Communicate.DataBaseCmd ddd = (Communicate.DataBaseCmd) ob;
             }
-            Invoke((Action)show);
         }
-        private void Server_DataFinished()
+
+        private void Server_DataFinished(EndPoint endPoint)
         {
-            var bdata = server.ReceiveData;
-            //object ob = Communicate.BytesToStruct(bdata, new Communicate.tryclass().GetType());
-            //Communicate.tryclass t2 = ob as Communicate.tryclass? ?? new Communicate.tryclass();
             void show()
             {
-                label5.Text = Encoding.Default.GetString(bdata);
+                label5.Text = @"got it";
             }
             Invoke((Action)show);
             //throw new NotImplementedException();
+
+            object ob=Communicate.Bytes2Object(server.ReceiveData);
+            Type type = ob.GetType();
+            if (type == typeof(Communicate.DataBaseCmd))
+            {
+                Communicate.DataBaseCmd ddd = (Communicate.DataBaseCmd) ob;
+                object value = dataBaseManager.DataSet.Tables[0].Rows[ddd.Row][ddd.Columns];
+                var bbbyte = Communicate.Object2Bytes(value);
+                server.Write(server.Dict[endPoint], bbbyte, bbbyte.Length);
+                //server.Write()
+            }
         }
 
         private Server server = new Server("109109109");
@@ -66,16 +74,15 @@ namespace testTool//ssss
         }
         private void Button2_Click(object sender, EventArgs e)
         {
-            //client.ConnectServer();
             client.ConnectServer(IPAddress.Parse(textBox2.Text), 6000);
         }
 
         private void Button3_Click(object sender, EventArgs e)
         {
-            //client.SendData("ok");
-            var sdata = Encoding.Default.GetBytes("Hello,Server!");  
-            client.Write(sdata, sdata.Length);
-            //client.TrySendClass();
+            var sdata = Encoding.Default.GetBytes("Hello,Server!");
+            Communicate.DataBaseCmd dataBaseCmd = new Communicate.DataBaseCmd(Communicate.CmdType.Read, 1, 1);
+            var bData = Communicate.Object2Bytes(dataBaseCmd);
+            client.Write(bData, bData.Length);
         }
 
         private void Button4_Click(object sender, EventArgs e)
@@ -115,8 +122,11 @@ namespace testTool//ssss
             //server.Send(listBox1.SelectedIndex,);
             //server.SendCMD(listBox1.SelectedIndex,cmddata);
             var data = Encoding.Default.GetBytes("Hello,Client!");
-            server.Write(listBox1.SelectedIndex,data,data.Length);
+            //server.Write(listBox1.SelectedIndex,data,data.Length);
             //server.TrySendClass();
+            Communicate.DataBaseCmd dataBaseCmd = new Communicate.DataBaseCmd(Communicate.CmdType.Read, 1, 1);
+            var bData = Communicate.Object2Bytes(dataBaseCmd);
+            server.Write(listBox1.SelectedIndex, bData, bData.Length);
         }
 
         private void Button6_Click(object sender, EventArgs e)
@@ -131,37 +141,35 @@ namespace testTool//ssss
         private void Button7_Click(object sender, EventArgs e)
         {
             //dataBaseManager.SetValue(0, 1, 1234);
+            DataRow dataRow = dataBaseManager.DataSet.Tables[0].NewRow();
+            dataRow[0] = 3957;
+            dataRow[1] = 551;
+            dataBaseManager += dataRow;
             dataBaseManager.UpdateData();
             //label2.Text = cmddata.DataStr;
         }
-
+        byte[] bbb;
+       
         private void button8_Click(object sender, EventArgs e)
         {
-           // tryname(func);
-            //tryinfo();
-            string s = "尝试";
-            var b = Encoding.Default.GetBytes(s);
-            label7.Text=s+Encoding.Default.GetString(b);
-        }
-        delegate void fund(int i);
-        void tryname(fund fun)
-        {
-            label7.Text = "ok";
-            fun(1);
-            label8.Text = fun.Method.Name;
-            System.Reflection.ParameterInfo[] infos=fun.Method.GetParameters();
+            byte[] buffer = {0, 1};
+            label1.Text = buffer[0].ToString();
+            label7.Text = buffer[1].ToString();
+            tryop(buffer);
+            label2.Text = buffer[0].ToString();
+            label8.Text = buffer[1].ToString();
             
         }
-        void func(int i)
+
+        private void Form1_Load(object sender, EventArgs e)
         {
-            label7.Text += "  ok";
+            dataBaseManager.SetDataSet();
         }
-        void tryinfo()
+
+        void tryop(byte[] buffer)
         {
-            StackTrace ss = new StackTrace(true);  
-            Type t = ss.GetFrame(1).GetMethod().ReflectedType;  
-            String sName = ss.GetFrame(1).GetMethod().Name;  
-            MessageBox.Show(DateTime.Now+  "typeName:"+t.FullName + " sName: " + sName);  
+            buffer[0]++;
+            buffer[1]++;
         }
     }
 }

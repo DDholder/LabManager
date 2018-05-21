@@ -15,7 +15,8 @@ namespace LabManager.Net
         /// <summary>
         /// TCP收到数据事件委托
         /// </summary>
-        public delegate void DataFinishedHandle();
+        /// <param name="endPoint">受到数据的目标远程地址</param>
+        public delegate void DataFinishedHandle(EndPoint endPoint);
         /// <summary>
         /// TCP收到数据事件
         /// </summary>
@@ -34,6 +35,10 @@ namespace LabManager.Net
         /// 收到的数据
         /// </summary>
         public byte[] ReceiveData { get; private set; }
+        /// <summary>
+        /// 收到数据的长度
+        /// </summary>
+        public int? ReceiveLength { get; private set; }
 
         /// <summary>
         /// 此组建的网络数据流
@@ -51,15 +56,6 @@ namespace LabManager.Net
             ThisNetworkStream.Flush();
         }
         /// <summary>
-        /// (*测试用)尝试发送struct
-        /// </summary>
-        public void TrySendClass()
-        {
-            Communicate.Tryclass t = new Communicate.Tryclass { num = 132456, id = 222 };
-            byte[] data = Communicate.StructToBytes(t);
-            ThisNetworkStream.Write(data, 0, data.Length);
-        }
-        /// <summary>
         /// 接收数据，如收到数据则触发DataFinished事件，断开则触发DisConnected事件
         /// </summary>
         /// <param name="client">要接受数据的TcpClient</param>
@@ -71,18 +67,19 @@ namespace LabManager.Net
                 try
                 {
                     var result = new byte[4096];
-                    myClient?.Client.Receive(result);
-                    ReceiveData = result;
-                    if (result.Length == 0)
+                    ReceiveLength = myClient?.Client.Receive(result);
+                    ReceiveData = new byte[ReceiveLength ?? 0];
+                    Array.Copy(result, ReceiveData, ReceiveLength ?? 0);
+                    if (ReceiveLength == 0)
                     {
                         DisConnected?.Invoke(myClient?.Client.RemoteEndPoint);
                         return;
                     }
-                    DataFinished?.Invoke();
+                    DataFinished?.Invoke(myClient?.Client.RemoteEndPoint);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.ToString());
+                    MessageBox.Show(ex.Message);
                     DisConnected?.Invoke(myClient?.Client.RemoteEndPoint);
                     RecordErrLog(ex.ToString());
                     break;

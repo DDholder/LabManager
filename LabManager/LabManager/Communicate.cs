@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace LabManager
 {
@@ -8,51 +11,61 @@ namespace LabManager
     /// </summary>
     public static class Communicate
     {
-        public struct Tryclass
+        public enum CmdType
         {
-            public int num;
-            public int id;
+            Write,
+            Read
         }
         /// <summary>
-        /// 将struct转为byte[]
+        /// 数据库命令结构包
         /// </summary>
-        /// <param name="structObj">待转换的struct</param>
-        /// <returns>转换完成后的byte[]</returns>
-        public static byte[] StructToBytes(object structObj)
+        [Serializable]
+        public struct DataBaseCmd
         {
-            int size = Marshal.SizeOf(structObj);
-            IntPtr buffer = Marshal.AllocHGlobal(size);
-            try
+            public int Operate;
+            public int Row;
+            public int Columns;
+            public object Value;
+            public DataBaseCmd(CmdType operate, int row, int columns, object value = null)
             {
-                Marshal.StructureToPtr(structObj, buffer, false);
-                byte[] bytes = new byte[size];
-                Marshal.Copy(buffer, bytes, 0, size);
-                return bytes;
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(buffer);
+                Operate = (int)operate;
+                Row = row;
+                Columns = columns;
+                Value = value;
             }
         }
         /// <summary>
-        /// 将byte[]还原为struct
+        /// object序列化
         /// </summary>
-        /// <param name="bytes">待转换的byte[]</param>
-        /// <param name="type">struct的Type</param>
-        /// <returns>转换后的struct</returns>
-        public static object BytesToStruct(byte[] bytes, Type type)
+        /// <param name="obj">要序列化的object</param>
+        /// <returns>返回序列化后的byte[]</returns>
+        public static byte[] Object2Bytes(object obj)
         {
-            int size = Marshal.SizeOf(type);
-            IntPtr buffer = Marshal.AllocHGlobal(size);
-            try
+            byte[] buff;
+            using (MemoryStream ms = new MemoryStream())
             {
-                Marshal.Copy(bytes, 0, buffer, size);
-                return Marshal.PtrToStructure(buffer, type);
+                BinaryFormatter iFormatter = new BinaryFormatter();
+                iFormatter.Serialize(ms, obj);
+                buff = ms.GetBuffer();
             }
-            finally
-            {
-                Marshal.FreeHGlobal(buffer);
-            }
+            return buff;
         }
+
+        /// <summary>
+        /// 将byte[]反序列化为objec实例
+        /// </summary>
+        /// <param name="buff">待序列化的byte[]</param>
+        /// <returns>反序列化后的objec实例</returns>
+        public static object Bytes2Object(byte[] buff)
+        {
+            object obj;
+            using (MemoryStream ms = new MemoryStream(buff))
+            {
+                BinaryFormatter iFormatter = new BinaryFormatter();
+                obj = iFormatter.Deserialize(ms);
+            }
+            return obj;
+        }
+
     }
 }

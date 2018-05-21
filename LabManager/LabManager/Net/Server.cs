@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using LabManager.Message;
@@ -40,7 +39,7 @@ namespace LabManager.Net
         /// <summary>
         /// 客户端列表索引的字典
         /// </summary>
-        public static Dictionary<EndPoint, ClientMember> Dict = new Dictionary<EndPoint, ClientMember>();
+        public Dictionary<EndPoint, ClientMember> Dict = new Dictionary<EndPoint, ClientMember>();
         /// <summary>
         /// 获取服务器IP地址
         /// </summary>
@@ -52,7 +51,7 @@ namespace LabManager.Net
         /// <summary>
         /// 获取服务器是否打开
         /// </summary>
-        public bool ServerOpened => _serverOpened; 
+        public bool ServerOpened => _serverOpened;
         /// <summary>
         /// 获取或设置权限
         /// </summary>
@@ -88,7 +87,7 @@ namespace LabManager.Net
 
                 _loginPermission = Permission.Guest;
                 DisConnected += Server_DisConnected;
-                RecordOperateLog("服务器启动，地址：" + ThisIP+":"+ThisPort);
+                RecordOperateLog("服务器启动，地址：" + ThisIP + ":" + ThisPort);
             }
             catch (Exception ex)
             {
@@ -104,11 +103,11 @@ namespace LabManager.Net
         /// 客户端离线的处理
         /// </summary>
         /// <param name="endPoint">离线客户端的远端地址</param>
-        private void Server_DisConnected(EndPoint endPoint) 
+        private void Server_DisConnected(EndPoint endPoint)
         {
             try
             {
-                ClientMember clientMember = Dict[endPoint]; 
+                ClientMember clientMember = Dict[endPoint];
                 string name = clientMember.Name;
                 _clientSocket.Remove(Dict[clientMember.Address]);
                 clientMember.TCPClient.Close();
@@ -132,13 +131,13 @@ namespace LabManager.Net
             if (_serverOpened)
             {
                 Excepte?.Invoke(_tcpMessage.ServerOpened_OK);
-                RecordOperateLog("打开成功，Permission="+_loginPermission);
+                RecordOperateLog("打开成功，Permission=" + _loginPermission);
                 return;
             }
             if (_loginPermission == Permission.Guest)
             {
                 Excepte?.Invoke(_tcpMessage.InsufficientPermission);
-                RecordOperateLog("打开失败，Permission="+_loginPermission);
+                RecordOperateLog("打开失败，Permission=" + _loginPermission);
             }
             try
             {
@@ -151,7 +150,7 @@ namespace LabManager.Net
                 _serverOpened = true;
 
                 Excepte?.Invoke(_tcpMessage.ServerOpened_OK);
-                RecordOperateLog("打开成功，Permission="+_loginPermission);
+                RecordOperateLog("打开成功，Permission=" + _loginPermission);
             }
             catch (SocketException ex)
             {
@@ -169,7 +168,7 @@ namespace LabManager.Net
             try
             {
                 var myClient = client as ClientMember;
-                AcceptLinkForm acceptLinkForm = new AcceptLinkForm(myClient);
+                AcceptLinkForm acceptLinkForm = new AcceptLinkForm(myClient) {TopMost = true};
                 acceptLinkForm.ShowDialog();
                 myClient = acceptLinkForm.ThisClient;
                 acceptLinkForm.Close();
@@ -198,11 +197,11 @@ namespace LabManager.Net
                     IsBackground = true
                 };
                 receiveThread.Start(_clientSocket[_clientSocket.Count - 1].TCPClient);
-                RecordOperateLog(_clientSocket[_clientSocket.Count - 1].Address+"("+_clientSocket[_clientSocket.Count - 1].Name+")"+"上线");
+                RecordOperateLog(_clientSocket[_clientSocket.Count - 1].Address + "(" + _clientSocket[_clientSocket.Count - 1].Name + ")" + "上线");
             }
             catch (SocketException ex)
             {
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show(ex.Message);
                 RecordErrLog(ex.ToString());
             }
         }
@@ -224,7 +223,7 @@ namespace LabManager.Net
                 }
                 catch (SocketException ex)
                 {
-                    MessageBox.Show(ex.ToString());
+                    MessageBox.Show(ex.Message);
                     RecordErrLog(ex.ToString());
                     break;
                 }
@@ -243,7 +242,27 @@ namespace LabManager.Net
             {
                 ThisNetworkStream = _clientSocket[index].NetworkStream;
                 Write(data, size, offset);
-                RecordOperateLog("发送数据:"+Encoding.Default.GetString(data));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                RecordErrLog(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 向指定的客户端发送数据
+        /// </summary>
+        /// <param name="member">客户端成员</param>
+        /// <param name="data">要发送的数据</param>
+        /// <param name="size">要发送的长度</param>
+        /// <param name="offset">从data的那个位置开始发送</param>
+        public void Write(ClientMember member, byte[] data, int size, int offset = 0)
+        {
+            try
+            {
+                ThisNetworkStream = member.NetworkStream;
+                Write(data, size, offset);
             }
             catch (Exception ex)
             {
